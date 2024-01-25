@@ -7,19 +7,19 @@ print("Config start")
 print(config)
 print("Config end")
 
-df = pd.read_csv(Path(config['img_ipdir']).joinpath('train_select_1K.csv'))
-# df = df[:25]
+df = pd.read_csv(Path(config['img_ipdir']).joinpath('train.csv'))
+df = df[:25]
 idlist = df['ID'].tolist()
 
 # OPFOLDER = 'train_rgb_c210_25_merge'
 # OPCSVALL = 'all_25_merge.csv'
-OPFOLDER = 'train_rgb_c210_merge_1K'
-OPCSVALL = 'all_merge_1K.csv'
+OPFOLDER = 'train_rgb_c210_merge'
+OPCSVALL = 'all_merge.csv'
 
 rule all:
     input:
         csv = Path(config['img_opdir'], OPCSVALL),
-        data_npy = expand(Path(config['img_opdir'], OPFOLDER, 'seg_code', '{imgid}_seg.npy'), imgid = idlist),
+        # data_npy = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_seg.npy'), imgid = idlist),
         # masks_png = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_cp_masks.png'), imgid = idlist), 
         # outlines_txt = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_cp_outlines.txt'), imgid = idlist), 
         # output_png = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_cp_output.png'), imgid = idlist),
@@ -63,18 +63,18 @@ rule cellpose:
     input:
         # img = expand(Path(config['img_opdir'], OPFOLDER, 'img', '{imgid}.png'), imgid = idlist), 
     output:
-        data_npy = expand(Path(config['img_opdir'], OPFOLDER, 'seg_code', '{imgid}_seg.npy'), imgid = idlist),
+        data_npy = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_seg.npy'), imgid = idlist),
         # masks_png = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_cp_masks.png'), imgid = idlist), 
         # outlines_txt = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_cp_outlines.txt'), imgid = idlist), 
         # output_png = expand(Path(config['img_opdir'], OPFOLDER, 'seg', '{imgid}_cp_output.png'), imgid = idlist),
     params:
         img = Path(config['img_opdir'], OPFOLDER, 'img' ), 
-        g_device = 1,
-        batch_size = 512,
-        n_trunk = 30
+        g_device = 0,
+        batch_size = 512
+        n_trunk = 10 
     shell:
         f"python {Path(config['script_dir'], 'cellpose_seg.py')}" + \
-        " -i {params.img} " + f"-o {Path(config['img_opdir'], OPFOLDER, 'seg_code')}" + \
+        " -i {params.img} " + f"-o {Path(config['img_opdir'], OPFOLDER, 'seg')}" + \
         " -g {params.g_device} -b {params.batch_size} -n {params.n_trunk}"    
 
     

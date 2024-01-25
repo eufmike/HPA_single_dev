@@ -20,6 +20,26 @@ Snakemake does not have to be installed in the same conda environment as the one
         2. "cyto2" is the model used in cell segmentation. If cellpose fails to download the model, please download the model manually and put it in the cellpose model directory. The model can be downloaded from [here](https://drive.google.com/file/d/1zHGFYCqRCTwTPwgEUMNZu0EhQy2zaovg/view)
 3. git clone this repository
 
+## Run Snakemake
+
+In my environment, I directy run the Snakemake on our Linux machince (CentOS), so I haven't tested its function sending commands to cluster. Please refer to [snakemake doc: Cluster Execution](https://snakemake.readthedocs.io/en/stable/tutorial/additional_features.html#cluster-execution) for more information.
+
+I created three conda environment for running the pipeline.
+
+1. "mssm" for hosting Snakemake
+2. "mscp03" for running cellpose
+3. "mspytorch" for running basic image processing
+
+Three rules are in the current version of Snakefile:
+
+1. convert: using conda env "mspytorch"
+2. merge: using conda env "mspytorch"
+3. cellpose: using conda env "mscp03"
+
+Note: mscp03 supposed to be able to handle basic image processing. However, it failed to run rule "convert" and "merge", so I pointed the Snakefile to mspytorch to saving time from debuging.
+
+Please change the conda env according to your environment.
+
 ## Reference
 
 1. Snakemake: scalable bioinformatics workflows. Johannes Köster and Sven Rahmann. Bioinformatics 2012. [doi:10.1093/bioinformatics/bts480](https://doi.org/10.1093/bioinformatics/bts480)
